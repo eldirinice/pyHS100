@@ -129,6 +129,12 @@ def state(ctx, dev):
 
     click.echo(click.style("Device state: %s" % "ON" if dev.is_on else "OFF",
                            fg="green" if dev.is_on else "red"))
+    if dev.num_children > 0:
+        is_on = dev.is_on()
+        aliases = dev.get_alias()
+        for child in range(dev.num_children):
+            click.echo(click.style("  * %s state: %s" % (aliases[child], "ON" if is_on[child] else "OFF"),
+                                   fg="green" if is_on[child] else "red"))
     click.echo("Host/IP: %s" % dev.host)
     for k, v in dev.state_information.items():
         click.echo("%s: %s" % (k, v))
@@ -140,6 +146,24 @@ def state(ctx, dev):
     click.echo("Location:     %s" % dev.location)
 
     ctx.invoke(emeter)
+
+
+@cli.command()
+@pass_dev
+@click.argument('index', required=False, default=None)
+def plugstatus(dev, index):
+    """Displays plug status for a smart strip"""
+    if not isinstance(dev, SmartStrip):
+        click.echo("Device is not a smart strip.")
+    elif not hasattr(dev, 'num_children'):
+        click.echo("Device is not a smart strip.")
+    else:
+        if index is None:
+            is_on = dev.is_on()
+            for child in range(dev.num_children):
+                click.echo("Plug %d state: %s" % (child + 1, "ON" if is_on[child] else "OFF"))
+        else:
+            click.echo("Plug %s state: %s" % (int(index), "ON" if dev.is_on(index=int(index)-1) else "OFF"))
 
 
 @cli.command()

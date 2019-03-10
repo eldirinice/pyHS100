@@ -15,6 +15,7 @@ Python Library to control TPLink smart plugs/switches and smart bulbs.
   * HS105
   * HS110
 * Power Strips
+  * HS107
   * HS300
 * Wall switches
   * HS200
@@ -32,13 +33,13 @@ Python Library to control TPLink smart plugs/switches and smart bulbs.
 
 # Usage
 
-The package is shipped with a console tool named pyhs100, please refer to ```pyhs100 --help``` for detailed usage.
-The device to which the commands are sent is chosen by `PYHS100_HOST` environment variable or passing `--host <address>` as an option.
+The package is shipped with a console tool named pyhs100. Please refer to ```pyhs100 --help``` for detailed usage.
+The device to which the commands are sent is chosen by the `PYHS100_HOST` environment variable or by passing `--host <address>` as an option.
 To see what is being sent to and received from the device, specify option `--debug`.
 
-To avoid discovering the devices when executing commands its type can be passed by specifying either `--plug` or `--bulb`,
-if no type is given its type will be discovered automatically with a small delay.
-Some commands (such as reading energy meter values and setting color of bulbs) additional parameters are required,
+To avoid discovering the devices when executing commands, its type can be passed by specifying `--plug`, `--bulb`, or `--strip`.
+If no type is given, its type will be discovered automatically with a small delay.
+For some commands (such as reading energy meter values and setting color of bulbs), additional parameters are required,
 which you can find by adding `--help` after the command, e.g. `pyhs100 emeter --help` or `pyhs100 hsv --help`.
 
 If no command is given, the `state` command will be executed to query the device state.
@@ -51,7 +52,7 @@ In both cases supported devices are discovered from the same broadcast domain, a
 
 ```
 $ pyhs100
-No --bulb nor --plug given, discovering..
+No --strip nor --bulb nor --plug given, discovering..
 Discovering devices for 3 seconds
 == My Smart Plug - HS110(EU) ==
 Device state: ON
@@ -72,15 +73,15 @@ Current state: {'total': 133.082, 'power': 100.418681, 'current': 0.510967, 'vol
 
 All devices support a variety of common commands, including:
  * `state` which returns state information
- * `on` and `off` for turning the device on or off
+ * `on` and `off` for turning the device on or off. For strips, specifying the plug number will turn only that plug on or off. Omitting the plug number will turn all plugs on or off.
  * `emeter` (where applicable) to return energy consumption information
  * `sysinfo` to return raw system information which is used by e.g. `state`, useful for debugging and when adding support for new device types
 
 ## Energy meter
 
 Passing no options to `emeter` command will return the current consumption.
-Possible options include `--year` and `--month` for retrieving historical state,
-and reseting the counters is done with `--erase`.
+Possible options include `--year` and `--month` for retrieving historical state.
+Resetting the counters is done with `--erase`.
 
 ```
 $ pyhs100 emeter
@@ -94,7 +95,7 @@ At the moment only switching the state of the LED is implemented.
 **Feel free to submit patches as pull requests for further features!**
 ### Controlling the LED
 
-`led` command can be used to control whether the LED light on front of the plug is on or off.
+The `led` command can be used to control whether the LED light on front of the plug is on or off.
 
 ```
 $ pyhs100 --plug led
