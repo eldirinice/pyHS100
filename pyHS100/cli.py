@@ -156,9 +156,7 @@ def state(ctx, dev):
 @click.argument('index', required=False, default=None)
 def plugstatus(dev, index):
     """Displays plug status for a smart strip"""
-    if not isinstance(dev, SmartStrip):
-        click.echo("Device is not a smart strip.")
-    elif not hasattr(dev, 'num_children'):
+    if not isinstance(dev, SmartStrip) or not hasattr(dev, 'num_children'):
         click.echo("Device is not a smart strip.")
     else:
         if index is None:
