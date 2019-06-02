@@ -205,9 +205,12 @@ class SmartStrip(SmartPlug):
         state = {'LED state': self.led}
         is_on = self.is_on()
         on_since = self.on_since()
+        is_on = self.is_on()
         for plug_index in range(self.num_children):
-            state['Plug %d' % (plug_index + 1)] = \
-                '%s' % (f'On since {on_since[plug_index]}' if is_on[plug_index] == 1 else 'Off')
+            plug_number = plug_index + 1
+            if is_on[plug_index]:
+                state['Plug %d on since' % plug_number] = on_since[plug_index]
+
         return state
 
     def get_emeter_realtime(self, *, index: int = -1) -> Optional[Any]:
